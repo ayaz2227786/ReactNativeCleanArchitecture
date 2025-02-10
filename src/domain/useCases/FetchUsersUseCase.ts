@@ -8,6 +8,10 @@ export class FetchUsersUseCase {
     this.userRepository = userRepository;
   }
 
+  async executeByCity(cityId: string): Promise<User[]> {
+    return this.userRepository.getUsersByCity(cityId);
+  }
+
   async execute(): Promise<User[]> {
     return this.userRepository.getUsers();
   }

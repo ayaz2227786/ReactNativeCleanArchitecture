@@ -3,13 +3,20 @@ import { fetchUsersUseCase } from '../di/Container';
 import { LocalStorage } from '../data/storage/LocalStorage';
 import { User } from '../domain/models/User';
 
-export const useFetchUsers = () => {
+export const useFetchUsers = (cityId: string) => {
   const queryClient = useQueryClient();
 
   const { data: users, isLoading, error } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: () => fetchUsersUseCase.execute(),
+    queryKey: ['users', cityId],
+    queryFn: () => fetchUsersUseCase.execute(cityId),
+    enabled: !!cityId,
   });
+
+  // const { data: users, isLoading, error } = useQuery<User[]>({
+  //   queryKey: ['users', cityId],
+  //   queryFn: () => fetchUsersUseCase.execute(),
+  //   enabled: !!cityId,
+  // });
 
   const clearLocalStorage = async () => {
     await LocalStorage.removeData('users_data');
