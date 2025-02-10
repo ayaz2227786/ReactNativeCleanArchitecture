@@ -1,5 +1,5 @@
-import { User } from '../entities/User';
+import { User } from '../models/User';
 
 export interface UserRepository {
-  fetchUsers(): Promise<User[]>;
+  getUsers(): Promise<User[]>;
 }

@@ -1,38 +1,32 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { UserRepositoryImpl } from '../../data/repositories/UserRepositoryImpl';
-import { FetchUsersUseCase } from '../../domain/useCases/FetchUsersUseCase';
+import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
+import { useFetchUsers } from '../../hooks/useFetchUsers';
 
 const UserListScreen = () => {
-  const userRepository = new UserRepositoryImpl();
-  const fetchUsersUseCase = new FetchUsersUseCase(userRepository);
+  const { users, isLoading, error, clearLocalStorage } = useFetchUsers();
 
-  const { data: users, isLoading, error } = useQuery({
-    queryKey: ['users'], // Updated to object-based syntax
-    queryFn: () => fetchUsersUseCase.execute(),
-  });
-
-  if (isLoading) return <ActivityIndicator style={styles.loader} />;
-  if (error) return <Text style={styles.error}>Error fetching users</Text>;
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error fetching users</Text>;
 
   return (
-    <FlatList
-      data={users}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <View style={styles.item}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.email}>{item.email}</Text>
-        </View>
-      )}
-    />
+    <View style={styles.container}>
+      <Button title="Clear Local Storage" onPress={clearLocalStorage} />
+      <FlatList
+        data={users}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.email}>{item.email}</Text>
+          </View>
+        )}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  error: { flex: 1, justifyContent: 'center', alignItems: 'center', color: 'red' },
+  container: { flex: 1, padding: 16 },
   item: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#ccc' },
   name: { fontSize: 18, fontWeight: 'bold' },
   email: { fontSize: 16, color: 'gray' },

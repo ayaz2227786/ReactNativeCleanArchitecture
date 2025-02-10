@@ -1,10 +1,14 @@
-import { User } from '../entities/User';
 import { UserRepository } from '../repositories/UserRepository';
+import { User } from '../models/User';
 
 export class FetchUsersUseCase {
-  constructor(private userRepository: UserRepository) {}
+  private userRepository: UserRepository;
+
+  constructor(userRepository: UserRepository) {
+    this.userRepository = userRepository;
+  }
 
   async execute(): Promise<User[]> {
-    return this.userRepository.fetchUsers();
+    return this.userRepository.getUsers();
   }
 }
